@@ -9,12 +9,23 @@ dotenv.config();
 const app = express();
 const port = Number(process.env.PORT || 5000);
 const mongoUri = process.env.MONGODB_URI;
+const allowedOrigins = (process.env.CLIENT_ORIGIN || "http://localhost:5173")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const corsOptions = {
+  origin: allowedOrigins,
+  methods: ["GET", "POST", "OPTIONS"],
+  credentials: true,
+};
 
 if (!mongoUri) {
   throw new Error("MONGODB_URI is required.");
 }
 
-app.use(cors());
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(express.json());
 
 app.get("/api/health", (_req, res) => {

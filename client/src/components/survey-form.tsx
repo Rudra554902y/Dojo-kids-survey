@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -12,6 +11,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
+import { apiClient } from "@/lib/api";
 import { Loader2, CheckCircle2, TrendingUp, Users, Heart } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -63,7 +63,7 @@ export function SurveyForm() {
   const respondentType = form.watch("respondentType");
 
   const fetchStats = async () => {
-    const response = await axios.get("/api/survey");
+    const response = await apiClient.get("/survey");
     setStats(response.data);
   };
 
@@ -74,7 +74,7 @@ export function SurveyForm() {
   const onSubmit = async (data: FormValues) => {
     try {
       setIsSubmitting(true);
-      await axios.post("/api/survey", data);
+      await apiClient.post("/survey", data);
       setIsSubmitted(true);
       await fetchStats();
       toast({
